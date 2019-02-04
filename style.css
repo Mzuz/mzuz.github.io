@@ -19,8 +19,8 @@ body {
   /* Non-prefixed version, currently
                                 supported by Chrome and Opera */
 
-  max-width: 1500px;
-  min-width: 1000px;
+  /* max-width: 1500px;
+  min-width: 1000px; */
 }
 
 .header {
