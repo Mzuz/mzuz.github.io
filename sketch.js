@@ -1,9 +1,11 @@
 class Segment {
-    constructor(x, y, color, stat) {
+    constructor(x, y, color, stat, bound, inside) {
         this.x = x;
         this.y = y;
         this.color = color
         this.stat = stat;
+        this.bound = bound;
+        this.inside = inside;
         this.limit = 5;
         this.num = 0;
     }
@@ -26,6 +28,10 @@ class Segment {
         pop();
     }
 
+    action() {
+        this.increaseNum();
+    }
+
     checkPointing() {
 
         if (mouseX > this.x * size && mouseX < this.x * size + size &&
@@ -44,14 +50,60 @@ class Segment {
 
 }
 
-let segments = [];
+class Btn {
+    constructor(x, y, txt, act) {
+        this.x = x;
+        this.y = y;
+        this.txt = txt;
+        this.bound = false;
+        this.inside = false;
+        this.act = act;
+    }
 
-let bound = [2, 3, 4, 5, 31, 32, 33, 34, 35, 7, 13, 19, 25, 12, 18, 24, 30, 18];
+    display() {
+        push();
+        translate(this.x * size, this.y * size);
+
+        fill(255);
+        stroke(120);
+        rect(0, 0, size, size, 5, 5, 5, 5)
+
+        fill(0);
+        textAlign(CENTER, CENTER)
+        text(this.txt, 1, 1, size, size);
+
+        pop();
+    }
+
+    action() {
+        if (this.act == 'o') {
+            resetBounds();
+        } else if (this.act == 'p') {
+            resetInside();
+        }
+    }
+
+    checkPointing() {
+
+        if (mouseX > this.x * size && mouseX < this.x * size + size &&
+            mouseY > this.y * size && mouseY < this.y * size + size) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+}
+
+let segments = [],
+    bd = [],
+    ins = [];
+
+let bound = [2, 3, 4, 5, 7, 12, 13, 18, 19, 24, 25, 30, 31, 32, 33, 34, 35];
 let skalar;
 let colors;
 let size;
-let n = 1,
-    z;
+let n = 1;
 
 function createMenu() {
     skalar = createSlider(60, 140, 60, 10);
@@ -65,6 +117,18 @@ function resize() {
     resizeCanvas(size * 6, size * 6)
 }
 
+function resetBounds() {
+    for (b of bd) {
+        segments[b].num = 0;
+    }
+}
+
+function resetInside() {
+    for (i of ins) {
+        segments[i].num = 0;
+    }
+}
+
 function setup() {
     createMenu();
     size = skalar.value();
@@ -76,18 +140,27 @@ function setup() {
     for (let i = 0; i < 6; i++) {
 
         for (let j = 0; j < 6; j++) {
-            if (n != 1 && n != 6 && n != 31 && n != 36) {
 
-                if (bound.includes(n)) {
-                    segments.push(new Segment(j, i, color(211, 211, 211), false));
-                } else {
-                    segments.push(new Segment(j, i, color(255, 160, 122), true));
+            if (n == 31) {
+                segments.push(new Btn(j, i, 'Reset oznaczeń', 'o'))
+            } else if (n == 36) {
+                segments.push(new Btn(j, i, 'Reset planszy', 'p'))
+            } else {
+
+                if (n != 1 && n != 6) {
+                    if (bound.includes(n)) {
+                        segments.push(new Segment(j, i, color(211, 211, 211), false, true, false));
+                        bd.push(segments.length - 1);
+                    } else {
+                        segments.push(new Segment(j, i, color(255, 160, 122), true, false, true));
+                        ins.push(segments.length - 1);
+                    }
                 }
+
             }
             n++;
         }
     }
-    z = true;
 }
 
 function draw() {
@@ -108,7 +181,7 @@ function draw() {
 function mouseClicked() {
     for (s of segments) {
         if (s.checkPointing()) {
-            s.increaseNum();
+            s.action();
         }
     }
 }
