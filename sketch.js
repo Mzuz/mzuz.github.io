@@ -54,7 +54,7 @@ let n = 1,
     z;
 
 function createMenu() {
-    skalar = createSlider(60, 120, 60, 20);
+    skalar = createSlider(60, 140, 60, 10);
     select('.scale').child(skalar);
     skalar.changed(resize);
 }
