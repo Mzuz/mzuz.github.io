@@ -18,7 +18,7 @@ class Segment {
         if (this.num != 0) {
             textAlign(CENTER, CENTER);
             textSize(24);
-            fill(255);
+            fill(0);
             stroke(255);
             text(this.num, 3, 3, size, size);
         }
